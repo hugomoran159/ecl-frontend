@@ -5,9 +5,9 @@
 .DS_*
 *.log
 logs
-*.env
 **/*.backup.*
 **/*.back.*
+.env
 
 node_modules
 bower_components
