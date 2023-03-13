@@ -2,7 +2,8 @@
   "name": "frontend",
   "version": "0.1.0",
   "engines": {
-    "node": "19.6.0"
+    "node": "19.6.0",
+    "npm": "9.4.0"
   },
   "private": true,
   "dependencies": {
