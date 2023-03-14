@@ -2,8 +2,9 @@ import React, { useRef, useEffect, useState, lazy } from "react";
 import mapboxgl from "mapbox-gl";
 import ReactDOM from "react-dom";
 import "./Map.css";
-import citydata from "./citydata.json";
+import citydata from "./citydata.geojson";
 import countriesdata from "./countries-mod.geojson";
+import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -15,13 +16,16 @@ const Popup = ({ cityName, countryName }) => (
   </div>
 );
 
-function changeFillColor(layerId, color, map) {
-  map.setPaintProperty(layerId, "fill-color", color);
-}
+
+
+
 
 const Map = () => {
   const mapContainerRef = useRef(null);
   const popUpRef = useRef(new mapboxgl.Popup({ offset: 15 }));
+  const [visibleLayer, setVisibleLayer] = useState("city-areas");
+  
+  const [map, setMap] = useState(null);
 
   // Initialize map when component mounts
   useEffect(() => {
@@ -33,6 +37,7 @@ const Map = () => {
     });
 
     map.on("load", () => {
+      
       map.addSource("countrydata", {
         type: "geojson",
         data: countriesdata,
@@ -44,6 +49,7 @@ const Map = () => {
         generateId: true,
       });
 
+
       map.addLayer(
         {
           id: "countries",
@@ -54,9 +60,9 @@ const Map = () => {
             "fill-color": {
               property: "Group", // this will be your density property form you geojson
               stops: [
-                [0, "#84222f"],
-                [1, "#445ef5"],
-                [2, "#5231ff"],
+                [1, "#84222f"],
+                [2, "#445ef5"],
+                [3, "#f231ff"],
               ],
             },
             "fill-opacity": 0.5,
@@ -64,7 +70,7 @@ const Map = () => {
         },
         "waterway-label"
       );
-
+      
 
 
       map.addLayer(
@@ -72,8 +78,8 @@ const Map = () => {
           id: "city-areas",
           type: "fill",
           source: "citydata",
-          layout: { visibility: "visible" },
-          filter: ['!', ['has', 'point_count']],
+          layout: { visibility: "none" },
+          filter: ["!", ["has", "point_count"]],
           paint: {
             "fill-color": [
               "case",
@@ -87,7 +93,17 @@ const Map = () => {
         },
         "waterway-label"
       );
+  
+        
+      map.setLayoutProperty(visibleLayer, "visibility", "visible");
+      
     });
+
+    
+
+    
+
+    
 
     map.on("click", (e) => {
       const features = map.queryRenderedFeatures(e.point, {
@@ -95,16 +111,13 @@ const Map = () => {
       });
       if (features.length > 0) {
         const feature = features[0];
-        const coordinates = [
-          feature.properties.GCPNT_LON,
-          feature.properties.GCPNT_LAT,
-        ];
+        const coordinates = [feature.properties.LON, feature.properties.LAT];
         // create popup node
         const popupNode = document.createElement("div");
         ReactDOM.render(
           <Popup
-            cityName={feature?.properties?.UC_NM_MN}
-            countryName={feature?.properties?.XC_NM_LST}
+            cityName={feature?.properties?.city}
+            countryName={feature?.properties?.country}
           />,
           popupNode
         );
@@ -113,7 +126,6 @@ const Map = () => {
           .setDOMContent(popupNode)
           .addTo(map);
 
-
         map.easeTo({
           center: coordinates,
           zoom: 9,
@@ -121,14 +133,7 @@ const Map = () => {
         });
       }
     });
-/*
-    map.on("mouseenter", "clusters", () => {
-      map.getCanvas().style.cursor = "pointer";
-    });
-    map.on("mouseleave", "clusters", () => {
-      map.getCanvas().style.cursor = "";
-    });
-*/
+
     let cityID = null;
 
     map.on("mousemove", "city-areas", (e) => {
@@ -172,12 +177,45 @@ const Map = () => {
       cityID = null;
     });
 
+    
+
+    setMap(map);
+
+    
+
     return () => map.remove();
   }, []);
+
+  useEffect (() => { 
+    if (map && map.getLayoutProperty('city-areas', "visibility", "none") && map.getLayoutProperty('countries', "visibility", "none")) {
+      map.setLayoutProperty('city-areas', "visibility", "visible");
+      setVisibleLayer('city-areas');
+    }});
+      
+
+
+  const handleChange = (_event, newLayer) => {
+    map.setLayoutProperty(visibleLayer, "visibility", "none");
+    map.setLayoutProperty(newLayer, "visibility", "visible");
+
+    
+    return setVisibleLayer[newLayer];
+  }
+
 
   return (
     <div>
       <div ref={mapContainerRef} className="map-container" />
+        <ToggleButtonGroup
+          color="primary"
+          value={visibleLayer}
+          exclusive
+          onChange={handleChange}
+          aria-label="Platform"
+        >
+          <ToggleButton value="city-areas">Cities</ToggleButton>
+          <ToggleButton value="countries">Countries</ToggleButton>
+        </ToggleButtonGroup>
     </div>
   );
 };

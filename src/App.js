@@ -1,9 +1,9 @@
 import React from 'react';
-import Map from './components/Map';
+import Map from './Map';
 import citydata from "./citydata.geojson";
 import countriesdata from "./countries-mod.geojson";
 
-
+/*
 const mapDefaults = {
   basemap: "mapbox://styles/mapbox/light-v11",
   center: [5, 34],
@@ -62,26 +62,16 @@ const Layers = [
   },
   
 ];
+*/
 
 const App = () =>  {
-  const [sources] = React.useState(Sources);
-  const [layers, setLayer] = React.useState(Layers);
-
-
 
 
 
 
   return (
     <div>
-      <Map
-      basemap={mapDefaults.basemap}
-      center={mapDefaults.center}
-      zoom={mapDefaults.zoom}
-      sources={Sources}
-      layers={Layers}
-      projection={mapDefaults.projection}
-      />
+<Map/>
     </div>
   );
 }
