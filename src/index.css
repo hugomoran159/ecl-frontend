@@ -20,7 +20,7 @@ code {
 
 
 .popup {
-  width: 200px;
+  width: 100%;
 }
 
 .route-name {
@@ -28,3 +28,16 @@ code {
   font-size: 0.875rem;
   margin: 0;
 }
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  top: 0; 
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background-color: #424140;
+  z-index: 1000;
+}
+

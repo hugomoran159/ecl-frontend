@@ -9,24 +9,25 @@ import {
   ApolloProvider,
   gql,
 } from "@apollo/client";
-import 'mapbox-gl/dist/mapbox-gl.css';
-
+import "mapbox-gl/dist/mapbox-gl.css";
+import { ChakraBaseProvider, extendBaseTheme } from "@chakra-ui/react";
+import chakraTheme from "@chakra-ui/theme";
 
 const client = new ApolloClient({
-  uri: "https://ecl-router.herokuapp.com/graphql",
+  uri: "http://127.0.0.1:8000/graphql",
   cache: new InMemoryCache(),
 });
-
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <App />
+      <ChakraBaseProvider theme={chakraTheme}>
+        <App />
+      </ChakraBaseProvider>
     </ApolloProvider>
   </React.StrictMode>
 );
-
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
