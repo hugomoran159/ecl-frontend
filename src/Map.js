@@ -3,15 +3,14 @@ import mapboxgl from "mapbox-gl";
 import ReactDOM from "react-dom";
 import "./Map.css";
 import { ToggleButtonGroup, ToggleButton } from "@mui/material";
-import {gql, useQuery} from "@apollo/client";
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-
+import { gql, useQuery } from "@apollo/client";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -21,49 +20,54 @@ const Popup = ({ cityName, countryName, data }) => (
       {cityName}, {countryName}
     </h3>
     <TableContainer component={Paper}>
-    <Table sx={{ minWidth: 250 }} aria-label="simple table">
-      <TableHead>
-        <TableRow>
-          <TableCell>Description</TableCell>
-          <TableCell align="right">Price</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-    {data.map((item) => (
-      <TableRow>
-        <TableCell>{item.description}</TableCell>
-        <TableCell align="right">{item.currency}{item.value}</TableCell>
-      </TableRow>
-    ))}
-      </TableBody>
+      <Table sx={{ minWidth: 250 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell>Description</TableCell>
+            <TableCell align="right">Price</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {data.map((item) => (
+            <TableRow>
+              <TableCell>{item.description}</TableCell>
+              <TableCell align="right">
+                {item.currency}
+                {item.value}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
       </Table>
     </TableContainer>
   </div>
 );
 
-const Map = ({ sources = [], cityData = [], layer, map}) => {
-  
+const Map = ({ sources = [], cityData = [], layer, selectedCityProp }) => {
   const [loaded, setLoaded] = useState(false);
   const cityDataEntries = cityData;
   const mapContainerRef = useRef(null);
   const popUpRef = useRef(new mapboxgl.Popup({ offset: 15 }));
-  const [visibleLayer, setVisibleLayer] = useState(layer);
-
+  const [visibleLayer, setVisibleLayer] = useState(null);
+  const [map, setMap] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
 
 
   // Initialize map when component mounts
   useEffect(() => {
-
-     map = new mapboxgl.Map({
+    console.log("mapparams");
+    const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/light-v11",
       center: [12.5788, 48.888],
       zoom: 4,
     });
-    console.log('mapparams')
-    
+
+
+
+    console.log("mapparams");
+
     map.on("load", () => {
-      
       map.addSource("countrydata", {
         type: "geojson",
         data: sources[0],
@@ -74,7 +78,6 @@ const Map = ({ sources = [], cityData = [], layer, map}) => {
         data: sources[1],
         generateId: true,
       });
-
 
       map.addLayer(
         {
@@ -96,8 +99,6 @@ const Map = ({ sources = [], cityData = [], layer, map}) => {
         },
         "waterway-label"
       );
-      
-
 
       map.addLayer(
         {
@@ -119,11 +120,9 @@ const Map = ({ sources = [], cityData = [], layer, map}) => {
         },
         "waterway-label"
       );
-      console.log(visibleLayer)
-
-      map.setLayoutProperty(layer, "visibility", "visible");
+      setMap(map);
+      setLoaded(true);
     });
-    
 
     map.on("click", (e) => {
       const features = map.queryRenderedFeatures(e.point, {
@@ -138,7 +137,11 @@ const Map = ({ sources = [], cityData = [], layer, map}) => {
           <Popup
             cityName={feature?.properties?.city}
             countryName={feature?.properties?.country}
-            data = {cityDataEntries.find((city) => city.name === feature?.properties?.cityNumbeo).data}
+            data={
+              cityDataEntries.find(
+                (city) => city.name === feature?.properties?.cityNumbeo
+              ).data
+            }
           />,
           popupNode
         );
@@ -197,31 +200,63 @@ const Map = ({ sources = [], cityData = [], layer, map}) => {
       cityID = null;
     });
 
-    console.log('mapset')
-
+    console.log("mapset");
 
     
-    setLoaded(true);
     return () => map.remove();
-  }, [sources, cityData, layer, map]);
+  }, [sources, cityData]);
 
-  /*
-  useEffect (() => { 
-    if (map && map.getLayoutProperty('city-areas', "visibility", "none") && map.getLayoutProperty('countries', "visibility", "none")) {
-      map.setLayoutProperty('city-areas', "visibility", "visible");
-      setVisibleLayer('city-areas');
-    }});
-      
+  useEffect(() => {
+    if (map && loaded) {
+        map.setLayoutProperty(layer, "visibility", "visible");
+        if(visibleLayer === null){
+            setVisibleLayer(layer);
+        }else{
+            map.setLayoutProperty(visibleLayer, "visibility", "none");
+            setVisibleLayer(layer);
+        }
+    }
+  }, [map, loaded, layer]);
 
+  
 
-  const handleChange = (_event, newLayer) => {
-    map.setLayoutProperty(visibleLayer, "visibility", "none");
-    map.setLayoutProperty(newLayer, "visibility", "visible");
+  useEffect(() => {
+    if (map && loaded) {
+      if(selectedCity === null){
+      map.on("render", () => {
+        map.queryRenderedFeatures({ layers: ["city-areas"] }).forEach((feature) => {
+          if (feature.properties.city === selectedCity) {
+            const coordinates = [feature.properties.LON, feature.properties.LAT];
+            // create popup node
+            const popupNode = document.createElement("div");
+            ReactDOM.render(
+              <Popup
+                cityName={feature?.properties?.city}
+                countryName={feature?.properties?.country}
+                data={
+                  cityDataEntries.find(
+                    (city) => city.name === feature?.properties?.cityNumbeo
+                  ).data
+                }
+              />,
+              popupNode
+            );
+            popUpRef.current
+              .setLngLat(coordinates)
+              .setDOMContent(popupNode)
+              .addTo(map);
 
-    
-    return setVisibleLayer[newLayer];
-  }
-*/
+            map.easeTo({
+              center: coordinates,
+              speed: 0.5,
+            });
+          }
+        });
+      });
+      setSelectedCity(selectedCityProp);
+    }
+    }
+  }, [map, loaded, selectedCityProp]);
 
 
 
@@ -233,7 +268,6 @@ const Map = ({ sources = [], cityData = [], layer, map}) => {
 };
 
 export default Map;
-
 
 /*
 <ToggleButtonGroup

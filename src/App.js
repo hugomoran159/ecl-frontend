@@ -147,9 +147,13 @@ const App = () => {
   const cityData = SetCityData();
   return (
     <div>
-      <Navbar sources ={sources} cityData = {cityData}>
+      { sources && cityData && sources.length > 0 && cityData.length > 0 ?
+      <Navbar sources ={sources} cityData = {cityData}> 
+      </Navbar> : <p>Loading...</p>
+      }
+      
         
-      </Navbar>
+      
     </div>
   );
 };
