@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, lazy } from "react";
-import mapboxgl from "mapbox-gl";
+import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import ReactDOM from "react-dom";
 import "./Map.css";
 import { gql, useQuery } from "@apollo/client";
