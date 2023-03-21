@@ -14,7 +14,7 @@ import { ChakraBaseProvider, extendBaseTheme } from "@chakra-ui/react";
 import chakraTheme from "@chakra-ui/theme";
 
 const client = new ApolloClient({
-  uri: "http://127.0.0.1:8000/graphql",
+  uri: "https://eclbackend.herokuapp.com/graphql",
   cache: new InMemoryCache(),
 });
 

@@ -103,28 +103,6 @@ nav {
     background-color: transparent;
 }
 
-.sidebar {
-    display: flex;
-    position: fixed;
-    left: -200px;
-    top: 0;
-    bottom: 0;
-    width: 200px;
-    background-color: var(--menu-color);
-    border-right: 2px solid;
-    border-color: rgba(0, 0, 0, 0.2);
-    z-index: 9;
-    transition: all 0.3s ease;
-  }
-
-  .sidebar-open {
-    transform: translateX(200px);
-  }
-
-  .text-buffer {
-    margin-top: 40px;
-  }
-
   .layerbutton {
     background-color: transparent;
     border: 2px solid;
@@ -143,4 +121,10 @@ nav {
   .layerbutton:active {
     color: #ddd;
     background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .numbeo-link {
+    color: blue;
+    text-decoration: underline;
+    
   }

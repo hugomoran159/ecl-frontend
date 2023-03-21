@@ -2,68 +2,196 @@ import React, { useRef, useEffect, useState, lazy } from "react";
 import mapboxgl from "mapbox-gl";
 import ReactDOM from "react-dom";
 import "./Map.css";
-import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import {
+  Radio,
+  RadioGroup,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
+  extendTheme,
+} from "@chakra-ui/react";
+import {radioTheme} from './components/radiobuttonstyle.js'
+
+export const theme = extendTheme({
+  components: { Radio: radioTheme },
+});
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
-const Popup = ({ cityName, countryName, data }) => (
-  <div className="popup">
+const Popup = ({ cityName, countryName, data, handlePopupClose }) => (
+  <div
+    className="popup"
+    style={{
+      position: "absolute",
+      right: `80px`,
+      top: `200px`,
+    }}
+  >
+    <button className="close-button" onClick={handlePopupClose}>
+      X
+    </button>
     <h3 className="city-popup">
       {cityName}, {countryName}
     </h3>
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 250 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Description</TableCell>
-            <TableCell align="right">Price</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+    <TableContainer>
+      <Table size="sm">
+        <Thead>
+          <Tr>
+            <Th>Description</Th>
+            <Th>Price</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {data.map((item) => (
-            <TableRow>
-              <TableCell>{item.description}</TableCell>
-              <TableCell align="right">
+            <Tr>
+              <Td>{item.description}</Td>
+              <Td>
                 {item.currency}
                 {item.value}
-              </TableCell>
-            </TableRow>
+              </Td>
+            </Tr>
           ))}
-        </TableBody>
+        </Tbody>
+        <Tfoot>
+          <Tr>
+            <Th>Description</Th>
+            <Th>Price</Th>
+          </Tr>
+        </Tfoot>
       </Table>
     </TableContainer>
   </div>
 );
 
-const Map = ({ sources = [], cityData = [], layer, selectedCityProp }) => {
+function Sidebar({
+  cityData,
+  layer,
+  handleCitySelect,
+  selectedCity,
+  selectedCountry,
+  handleCountrySelect,
+  query,
+  setQuery,
+}) {
+  const cityDataEntries = cityData;
+  const cityNames = cityDataEntries.map((city) => city.name);
+  const countryNames = cityDataEntries.map((city) => city.country);
+  const uniqueCountryNames = new Set();
+  countryNames.forEach((country) => uniqueCountryNames.add(country.trim()));
+  const uniqueCountryNamesArray = Array.from(uniqueCountryNames);
+
+  const filteredCityNames = cityNames.filter((city) =>
+    city.toLowerCase().includes(query.toLowerCase())
+  );
+  const filteredCountryNames = uniqueCountryNamesArray.filter((country) =>
+    country.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const handleInputChange = (event) => {
+    setQuery(event.target.value);
+  };
+
+  if (layer === "city-areas") {
+    return (
+      <div id="sidebar">
+        <div className="sidebar-title">
+          Cities
+          <input
+            type="text"
+            placeholder="Search cities"
+            className="searchbar"
+            value={query}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="sidebar-content">
+          <RadioGroup
+            defaultValue="1"
+            onChange={handleCitySelect}
+            value={selectedCity}
+          >
+            {filteredCityNames.map((city) => (
+              <div id="city-select">
+                <Radio value={city}>{city}</Radio>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <div id="sidebar">
+        <div className="sidebar-title">
+          Countries
+          <input
+            type="text"
+            placeholder="Search countries"
+            className="searchbar"
+            value={query}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="sidebar-content">
+          <RadioGroup
+            defaultValue="1"
+            onChange={handleCountrySelect}
+            value={selectedCountry}
+          >
+            {filteredCountryNames.map((country) => (
+              <div id="country-select">
+                <Radio value={country}>{country}</Radio>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+      </div>
+    );
+  }
+}
+
+const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
   const [loaded, setLoaded] = useState(false);
   const cityDataEntries = cityData;
   const mapContainerRef = useRef(null);
-  const popUpRef = useRef(new mapboxgl.Popup({ offset: 15 }));
+  const [popup, setPopup] = useState(null);
   const [visibleLayer, setVisibleLayer] = useState(null);
   const [map, setMap] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
+  const [showDrawer, setShowDrawer] = useState(showDrawerProp);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [query, setQuery] = useState("");
 
+  const handlePopupClose = () => {
+    setPopup(null);
+    setSelectedCity(null);
+  };
+
+  const handleCitySelect = (city) => {
+    setSelectedCity(city);
+  };
+
+  const handleCountrySelect = (country) => {
+    setSelectedCountry(country);
+  };
 
   // Initialize map when component mounts
   useEffect(() => {
     console.log("mapparams");
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/light-v11",
+      style: "mapbox://styles/mapbox/outdoors-v11",
       center: [12.5788, 48.888],
       zoom: 4,
+      projection: "globe",
     });
-
-
 
     console.log("mapparams");
 
@@ -131,9 +259,12 @@ const Map = ({ sources = [], cityData = [], layer, selectedCityProp }) => {
       if (features.length > 0) {
         const feature = features[0];
         const coordinates = [feature.properties.LON, feature.properties.LAT];
-        // create popup node
-        const popupNode = document.createElement("div");
-        ReactDOM.render(
+        map.easeTo({
+          center: coordinates,
+          speed: 0.5,
+        });
+
+        setPopup(
           <Popup
             cityName={feature?.properties?.city}
             countryName={feature?.properties?.country}
@@ -142,18 +273,11 @@ const Map = ({ sources = [], cityData = [], layer, selectedCityProp }) => {
                 (city) => city.name === feature?.properties?.cityNumbeo
               ).data
             }
+            handlePopupClose={handlePopupClose}
           />,
-          popupNode
         );
-        popUpRef.current
-          .setLngLat(coordinates)
-          .setDOMContent(popupNode)
-          .addTo(map);
+        
 
-        map.easeTo({
-          center: coordinates,
-          speed: 0.5,
-        });
       }
     });
 
@@ -202,67 +326,81 @@ const Map = ({ sources = [], cityData = [], layer, selectedCityProp }) => {
 
     console.log("mapset");
 
-    
     return () => map.remove();
   }, [sources, cityData]);
 
   useEffect(() => {
     if (map && loaded) {
-        map.setLayoutProperty(layer, "visibility", "visible");
-        if(visibleLayer === null){
-            setVisibleLayer(layer);
-        }else{
-            map.setLayoutProperty(visibleLayer, "visibility", "none");
-            setVisibleLayer(layer);
-        }
+      map.setLayoutProperty(layer, "visibility", "visible");
+      if (visibleLayer === null) {
+        setVisibleLayer(layer);
+      } else {
+        map.setLayoutProperty(visibleLayer, "visibility", "none");
+        setVisibleLayer(layer);
+      }
     }
   }, [map, loaded, layer]);
 
-  
-
   useEffect(() => {
     if (map && loaded) {
-      if(selectedCity === null){
-      map.on("render", () => {
-        map.queryRenderedFeatures({ layers: ["city-areas"] }).forEach((feature) => {
-          if (feature.properties.city === selectedCity) {
-            const coordinates = [feature.properties.LON, feature.properties.LAT];
-            // create popup node
-            const popupNode = document.createElement("div");
-            ReactDOM.render(
-              <Popup
-                cityName={feature?.properties?.city}
-                countryName={feature?.properties?.country}
-                data={
-                  cityDataEntries.find(
-                    (city) => city.name === feature?.properties?.cityNumbeo
-                  ).data
-                }
-              />,
-              popupNode
-            );
-            popUpRef.current
-              .setLngLat(coordinates)
-              .setDOMContent(popupNode)
-              .addTo(map);
+      if (selectedCity != null) {
+        const lat = cityData.find(
+          (city) => city.name === selectedCity
+        ).latitude;
+        const lon = cityData.find(
+          (city) => city.name === selectedCity
+        ).longitude;
+        const country = cityData.find(
+          (city) => city.name === selectedCity
+        ).country;
+        const data = cityDataEntries.find(
+          (city) => city.name === selectedCity
+        ).data;
 
-            map.easeTo({
-              center: coordinates,
-              speed: 0.5,
-            });
-          }
+        console.log(lat);
+        const lonlat = [lon, lat];
+        map.easeTo({
+          center: lonlat,
+          speed: 0.5,
         });
-      });
-      setSelectedCity(selectedCityProp);
-    }
-    }
-  }, [map, loaded, selectedCityProp]);
 
+        setPopup(
+          <Popup cityName={selectedCity} countryName={country} data={data} 
+          handlePopupClose={handlePopupClose}
+          />,
+        );
 
+        
+        
+      }
+    }
+  }, [map, loaded, selectedCity]);
+
+  useEffect(() => {
+    if (showDrawerProp) {
+      setShowDrawer(true);
+    } else {
+      setShowDrawer(false);
+    }
+  }, [showDrawerProp]);
 
   return (
     <div>
+      <div className={`sidebar ${showDrawer ? "sidebar-open" : ""}`}>
+        <Sidebar
+          cityData={cityData}
+          layer={layer}
+          handleCitySelect={handleCitySelect}
+          selectedCity={selectedCity}
+          selectedCountry={selectedCountry}
+          handleCountrySelect={handleCountrySelect}
+          query={query}
+          setQuery={setQuery}
+        />
+      </div>
+      {popup}
       <div ref={mapContainerRef} className="map-container" />
+
     </div>
   );
 };
