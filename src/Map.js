@@ -37,33 +37,31 @@ const Popup = ({ cityName, countryName, data, handlePopupClose, rank }) => (
     <button className="close-button" onClick={handlePopupClose}>
       X
     </button>
-    <h2 className="city-popup">
+    <h2 className="city-popup-title">
       {cityName}, {countryName}
     </h2>
-    <h3>Overall cost ranking: {rank}</h3>
-    <TableContainer>
-      <Table size="sm">
-        <Thead>
-          <Tr>
-            <Th>Description</Th>
-            <Th>Price</Th>
-            <Th>Ranking</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data.map((item) => (
-            <Tr>
-              <Td>{item.description}</Td>
-              <Td>
-                {item.currency}
-                {item.value}
-              </Td>
-              <Td>{item.rank}</Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </TableContainer>
+    <h3 className="cityRank">Overall cost ranking: {rank}</h3>
+    <table>
+      <thead>
+        <tr>
+          <th className="descriptionTitle">Description</th>
+          <th className="priceTitle">Price</th>
+          <th className="rankingTitle">Ranking</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((item) => (
+          <tr key={item.id}>
+            <td className="itemDescription">{item.description}</td>
+            <td className="itemPrice">
+              {item.currency}
+              {item.value}
+            </td>
+            <td className="itemRank">{item.rank}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   </div>
 );
 
@@ -116,7 +114,7 @@ function Sidebar({
             {filteredCityNames.map((city) => (
               <div id="city-select">
                 <Radio value={city} className="city-radio">
-                    <span className="city-button">{city}</span>
+                  <span className="city-button">{city}</span>
                 </Radio>
               </div>
             ))}

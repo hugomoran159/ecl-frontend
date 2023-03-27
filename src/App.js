@@ -100,17 +100,18 @@ function SetCityData() {
 const App = () => {
   const sources = [SetCountryGeojson()[0], SetCityGeojson()[0]];
   const cityData = SetCityData();
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    if (sources && cityData && sources.length > 0 && cityData.length > 0) {
+      setLoading(false);
+    }
+  }, [sources, cityData]);
 
   return (
     <div>
       <div
-        className="loading"
-        style={{
-          height:
-            sources && cityData && sources.length > 0 && cityData.length > 0
-              ? 0
-              : "100%",
-        }}
+        className={`loading ${loading ? "" : "loading-finished"}`}
       >
         <p className="loading-text">Loading...</p>
       </div>

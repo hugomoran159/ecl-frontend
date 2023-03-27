@@ -2,6 +2,11 @@
   --menu-color: #4B4B4D;
 }
 
+@font-face {
+  font-family: 'customFont';
+  src: url('./CenturyGothic.ttf');
+}
+
 .map-container {
     position: fixed;
     width: 100vw;
@@ -51,9 +56,9 @@
   .searchbar {
     border: 2px solid;
     background-color: var(--menu-color);
-    border-color: #000;
+    border-color: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-    margin-left: 1px;
+    margin-left: 4px;
     text-align: left;
     text-indent: 10px;
     color: #fff;
@@ -62,6 +67,7 @@
 
   .sidebar-content {
     padding: 10px;
+    font-family: 'customFont', sans-serif;
   }
 
 .city-button {

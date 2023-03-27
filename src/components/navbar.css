@@ -2,6 +2,11 @@
     --menu-color: #4B4B4D;
 }
 
+@font-face {
+  font-family: 'customFont';
+  src: url('../CenturyGothic.ttf');
+}
+
 nav {
     display: flex;
     justify-content: space-between;
@@ -50,6 +55,8 @@ nav {
     cursor: pointer;
     margin-left: 50px;
     color: #f0f0f0;
+    font-family: 'customFont', Arial, Helvetica, sans-serif;
+    
   }
 
   .navbar-title::selection {

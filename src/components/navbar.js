@@ -14,6 +14,7 @@ import {
   RadioGroup,
 } from "@chakra-ui/react";
 import Map from "../Map.js";
+import customFont from "../CenturyGothic.ttf";
 
 
 
