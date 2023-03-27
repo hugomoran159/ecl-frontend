@@ -109,7 +109,7 @@ const App = () => {
   }, [sources, cityData]);
 
   return (
-    <div>
+    <div className="background">
       <div
         className={`loading ${loading ? "" : "loading-finished"}`}
       >
