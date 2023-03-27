@@ -1,74 +1,81 @@
 :root {
-  --menu-color: #4B4B4D;
+  --menu-color: #4b4b4d;
 }
 
 @font-face {
-  font-family: 'customFont';
-  src: url('./CenturyGothic.ttf');
+  font-family: "customFont";
+  src: url("./CenturyGothic.ttf");
 }
 
 .map-container {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-  }
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+}
 
-  .popup {
-    width: 580px;
-    height: 450px;
-    background-color: #f0f0f0;
-    border: 1px solid black;
-    padding: 10px;
-    z-index: 999;
-    border-radius: 10px;
-  }
+.popup {
+  width: 510px;
+  height: 405px;
+  background-color: #dfdfdf;
+  border: 1px solid black;
+  padding: 10px;
+  z-index: 999;
+  border-radius: 7px;
+  align-items: center;
+  justify-content: center;
+}
 
-  .close-button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-  }
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
 
-  .sidebar {
-    display: flex;
-    position: fixed;
-    left: -200px;
-    top: 40px;
-    bottom: 0;
-    width: 200px;
-    background-color: var(--menu-color);
-    border-right: 2px solid;
-    border-color: rgba(0, 0, 0, 0.2);
-    z-index: 9;
-    transition: all 0.3s ease;
-    overflow-y:auto;
-  }
+.sidebar {
+  display: flex;
+  position: fixed;
+  left: -200px;
+  top: 40px;
+  bottom: 0;
+  width: 200px;
+  background-color: var(--menu-color);
+  border-right: 2px solid;
+  border-color: rgba(0, 0, 0, 0.2);
+  z-index: 9;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+  -webkit-transform: translate3d(0, 0, 1px);
+  -moz-transform: translate3d(0, 0, 1px);
+  -ms-transform: translate3d(0, 0, 1px);
+  -o-transform: translate3d(0, 0, 1px);
+  transform: translate3d(0, 0, 1px);
+}
 
-  .sidebar-open {
-    transform: translateX(200px);
-  }
+.sidebar-open {
+  transform: translateX(200px);
+}
 
-  .searchbar {
-    border: 2px solid;
-    background-color: var(--menu-color);
-    border-color: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    margin-left: 4px;
-    text-align: left;
-    text-indent: 10px;
-    color: #fff;
-    outline: none;
-  }
+.searchbar {
+  border: 2px solid;
+  background-color: var(--menu-color);
+  border-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  margin-left: 4px;
+  text-align: left;
+  text-indent: 10px;
+  color: #fff;
+  outline: none;
+}
 
-  .sidebar-content {
-    padding: 10px;
-    font-family: 'customFont', sans-serif;
-  }
+.sidebar-content {
+  padding: 10px;
+  font-family: "customFont", sans-serif;
+}
 
 .city-button {
   color: #eaeaea;
@@ -97,4 +104,81 @@
 /* For the corner of the scrollbar */
 ::-webkit-scrollbar-corner {
   background-color: #f1f1f1; /* Set the color of the corner */
+}
+
+.city-popup-title {
+  font-size: 21px;
+  margin: 0;
+  margin-bottom: 10px;
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  justify-content: center;
+  text-align: center;
+}
+
+.cityRank {
+  font-size: 18px;
+  margin: 0;
+  margin-bottom: 10px;
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  justify-content: center;
+  text-align: left;
+}
+
+.descriptionTitle {
+  font-size: 16px;
+  font-style: bold;
+  margin: 0;
+  margin-bottom: 10px;
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  justify-content: center;
+  text-align: left;
+}
+
+.priceTitle {
+  font-size: 16px;
+  font-style: bold;
+  margin: 0;
+  margin-bottom: 10px;
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  justify-content: center;
+  text-align: right;
+  padding: 10px;
+}
+
+.rankingTitle {
+  font-size: 16px;
+  font-style: bold;
+  margin: 0;
+  margin-bottom: 10px;
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  justify-content: center;
+  text-align: right;
+}
+
+.itemDescription {
+  font-size: 14px;
+  margin: 0;
+  margin-bottom: 10px;
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  justify-content: center;
+  text-align: left;
+}
+
+.itemPrice {
+  font-size: 14px;
+  margin: 0;
+  margin-bottom: 10px;
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  justify-content: right;
+  text-align: right;
+  padding-right: 10px;
+}
+
+.itemRank {
+  font-size: 14px;
+  margin: 0;
+  margin-bottom: 10px;
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  justify-content: right;
+  text-align: right;
 }
