@@ -25,6 +25,11 @@ export const theme = extendTheme({
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'EUR',
+});
+
 const Popup = ({ cityName, countryName, data, handlePopupClose, rank }) => (
   <div
     className="popup"
@@ -54,8 +59,7 @@ const Popup = ({ cityName, countryName, data, handlePopupClose, rank }) => (
           <tr key={item.id}>
             <td className="itemDescription">{item.description}</td>
             <td className="itemPrice">
-              {item.currency}
-              {item.value}
+              {formatter.format(item.value)}
             </td>
             <td className="itemRank">{item.rank}</td>
           </tr>
