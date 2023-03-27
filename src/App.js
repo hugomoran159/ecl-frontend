@@ -8,25 +8,28 @@ import MapIcon from "@mui/icons-material/Map";
 import MenuIcon from "@mui/icons-material/Menu";
 import Stack from "@mui/material/Stack";
 import Navbar from "./components/navbar";
-
+import "./App.css";
 
 const GET_CITY_DATA = gql`
-query {
-  cities{
-    name
-    latitude
-    longitude
-    country {
+  query {
+    cities {
       name
-    }
-    data {
-      name
-      description
-      currency
-      value
+      latitude
+      longitude
+      ranking
+      group
+      country {
+        name
+      }
+      data {
+        name
+        description
+        currency
+        value
+        rank
+      }
     }
   }
-}
 `;
 
 const GET_CITY_AREAS = gql`
@@ -77,6 +80,7 @@ function SetCityData() {
       description: data.description,
       currency: data.currency,
       value: data.value,
+      rank: data.rank,
     }));
 
     return {
@@ -85,6 +89,7 @@ function SetCityData() {
       longitude: city.longitude,
       country: country,
       data: cityData,
+      ranking: city.ranking,
     };
   });
   console.log("data retrieved");
@@ -98,13 +103,30 @@ const App = () => {
 
   return (
     <div>
-      { sources && cityData && sources.length > 0 && cityData.length > 0 ?
-      <Navbar sources ={sources} cityData = {cityData}> 
-      </Navbar> : <p>Loading...</p>
-      }
-      
-        
-      
+      <div
+        className="loading"
+        style={{
+          height:
+            sources && cityData && sources.length > 0 && cityData.length > 0
+              ? 0
+              : "100%",
+        }}
+      >
+        <p className="loading-text">Loading...</p>
+      </div>
+      <div
+        className="content"
+        style={{
+          opacity:
+            sources && cityData && sources.length > 0 && cityData.length > 0
+              ? 1
+              : 0,
+        }}
+      >
+        {sources && cityData && sources.length > 0 && cityData.length > 0 ? (
+          <Navbar sources={sources} cityData={cityData}></Navbar>
+        ) : null}
+      </div>
     </div>
   );
 };

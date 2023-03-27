@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, lazy } from "react";
-import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
+import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import ReactDOM from "react-dom";
 import "./Map.css";
 import { gql, useQuery } from "@apollo/client";
@@ -17,7 +17,7 @@ import {
   TableContainer,
   extendTheme,
 } from "@chakra-ui/react";
-import {radioTheme} from './components/radiobuttonstyle.js'
+import { radioTheme } from "./components/radiobuttonstyle.js";
 
 export const theme = extendTheme({
   components: { Radio: radioTheme },
@@ -25,7 +25,7 @@ export const theme = extendTheme({
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
-const Popup = ({ cityName, countryName, data, handlePopupClose }) => (
+const Popup = ({ cityName, countryName, data, handlePopupClose, rank }) => (
   <div
     className="popup"
     style={{
@@ -37,15 +37,17 @@ const Popup = ({ cityName, countryName, data, handlePopupClose }) => (
     <button className="close-button" onClick={handlePopupClose}>
       X
     </button>
-    <h3 className="city-popup">
+    <h2 className="city-popup">
       {cityName}, {countryName}
-    </h3>
+    </h2>
+    <h3>Overall cost ranking: {rank}</h3>
     <TableContainer>
       <Table size="sm">
         <Thead>
           <Tr>
             <Th>Description</Th>
             <Th>Price</Th>
+            <Th>Ranking</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -56,15 +58,10 @@ const Popup = ({ cityName, countryName, data, handlePopupClose }) => (
                 {item.currency}
                 {item.value}
               </Td>
+              <Td>{item.rank}</Td>
             </Tr>
           ))}
         </Tbody>
-        <Tfoot>
-          <Tr>
-            <Th>Description</Th>
-            <Th>Price</Th>
-          </Tr>
-        </Tfoot>
       </Table>
     </TableContainer>
   </div>
@@ -102,7 +99,6 @@ function Sidebar({
     return (
       <div id="sidebar">
         <div className="sidebar-title">
-          Cities
           <input
             type="text"
             placeholder="Search cities"
@@ -119,7 +115,9 @@ function Sidebar({
           >
             {filteredCityNames.map((city) => (
               <div id="city-select">
-                <Radio value={city}>{city}</Radio>
+                <Radio value={city} className="city-radio">
+                    <span className="city-button">{city}</span>
+                </Radio>
               </div>
             ))}
           </RadioGroup>
@@ -130,7 +128,6 @@ function Sidebar({
     return (
       <div id="sidebar">
         <div className="sidebar-title">
-          Countries
           <input
             type="text"
             placeholder="Search countries"
@@ -156,6 +153,8 @@ function Sidebar({
     );
   }
 }
+
+//Start of Map component
 
 const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
   const [loaded, setLoaded] = useState(false);
@@ -187,10 +186,10 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
     console.log("mapparams");
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/outdoors-v11",
+      style: "mapbox://styles/hugomoran/clfq3nsns008y01pcwqpu121m",
+      projection: "globe",
       center: [12.5788, 48.888],
       zoom: 4,
-      projection: "globe",
     });
 
     console.log("mapparams");
@@ -239,8 +238,8 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
             "fill-color": [
               "case",
               ["boolean", ["feature-state", "hover"], false],
-              "#63f0AC",
-              "#63C0AC",
+              "#756A6A",
+              "#5E7564",
             ],
 
             "fill-opacity": 0.7,
@@ -262,6 +261,7 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
         map.easeTo({
           center: coordinates,
           speed: 0.5,
+          zoom: 7,
         });
 
         setPopup(
@@ -274,10 +274,13 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
               ).data
             }
             handlePopupClose={handlePopupClose}
-          />,
+            rank={
+              cityDataEntries.find(
+                (city) => city.name === feature?.properties?.cityNumbeo
+              ).ranking
+            }
+          />
         );
-        
-
       }
     });
 
@@ -356,22 +359,27 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
         const data = cityDataEntries.find(
           (city) => city.name === selectedCity
         ).data;
+        const rank = cityData.find(
+          (city) => city.name === selectedCity
+        ).ranking;
 
         console.log(lat);
         const lonlat = [lon, lat];
         map.easeTo({
           center: lonlat,
           speed: 0.5,
+          zoom: 7,
         });
 
         setPopup(
-          <Popup cityName={selectedCity} countryName={country} data={data} 
-          handlePopupClose={handlePopupClose}
-          />,
+          <Popup
+            cityName={selectedCity}
+            countryName={country}
+            data={data}
+            handlePopupClose={handlePopupClose}
+            rank={rank}
+          />
         );
-
-        
-        
       }
     }
   }, [map, loaded, selectedCity]);
@@ -400,7 +408,6 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
       </div>
       {popup}
       <div ref={mapContainerRef} className="map-container" />
-
     </div>
   );
 };

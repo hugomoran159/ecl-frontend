@@ -1,19 +1,23 @@
+:root {
+  --menu-color: #4B4B4D;
+}
+
 .map-container {
     position: fixed;
     width: 100vw;
     height: 100vh;
   }
 
-  
   .popup {
-    width: 500px;
+    width: 580px;
     height: 450px;
-    background-color: white;
+    background-color: #f0f0f0;
     border: 1px solid black;
     padding: 10px;
     z-index: 999;
+    border-radius: 10px;
   }
-  
+
   .close-button {
     position: absolute;
     top: 5px;
@@ -24,6 +28,7 @@
     background-color: transparent;
     cursor: pointer;
   }
+
   .sidebar {
     display: flex;
     position: fixed;
@@ -31,7 +36,7 @@
     top: 40px;
     bottom: 0;
     width: 200px;
-    background-color: #fff;
+    background-color: var(--menu-color);
     border-right: 2px solid;
     border-color: rgba(0, 0, 0, 0.2);
     z-index: 9;
@@ -43,13 +48,47 @@
     transform: translateX(200px);
   }
 
-
   .searchbar {
     border: 2px solid;
-    border-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--menu-color);
+    border-color: #000;
+    border-radius: 10px;
+    margin-left: 1px;
+    text-align: left;
+    text-indent: 10px;
+    color: #fff;
+    outline: none;
   }
 
   .sidebar-content {
     padding: 10px;
   }
 
+.city-button {
+  color: #eaeaea;
+}
+
+.city-button:hover {
+  color: #fff;
+}
+
+/* For all WebKit-based browsers */
+::-webkit-scrollbar {
+  width: 10px; /* Set the width of the scrollbar */
+}
+
+/* For the track of the scrollbar */
+::-webkit-scrollbar-track {
+  background-color: var(--menu-color); /* Set the background color */
+}
+
+/* For the handle of the scrollbar */
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* Set the color of the handle */
+  border-radius: 10px;
+}
+
+/* For the corner of the scrollbar */
+::-webkit-scrollbar-corner {
+  background-color: #f1f1f1; /* Set the color of the corner */
+}

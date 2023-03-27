@@ -36,3 +36,25 @@
     transform: rotate(360deg);
   }
 }
+
+.loading {
+  transition: height 0.5s ease-in-out;
+  background-color: #292929;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-text {
+  color: white;
+  font-size: 36px;
+}
+
+.content {
+  transition:  0.5s ease-in-out;
+}

@@ -47,7 +47,7 @@ function Navbar({ sources = [], cityData = [] }) {
             <FontAwesomeIcon icon={faBars} size="xl" />
           </button>
 
-          <Popover isLazy>
+          <Popover isLazy className="title-popup">
             <PopoverTrigger>
               <h1 className="navbar-title" onClick={handleTitleClick}>
                 Erasmus Cost Of Living
