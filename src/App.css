@@ -5,7 +5,7 @@
 
 
 .loading {
-  transition: transform 0.5s ease-in-out;
+  transition: transform 1s ease-in-out;
   background-color: #292929;
   position: fixed;
   top: 0;
@@ -30,12 +30,12 @@
 }
 
 .content {
-  transition:  0.6s ease-in-out;
+  transition:  0.2s ease-in-out;
 }
 
 .background {
   z-index: -1;
   position: fixed;
   background-color: #292929;
-  
+
 }
