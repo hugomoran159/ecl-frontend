@@ -1,41 +1,32 @@
 import React, { useRef, useEffect, useState, lazy } from "react";
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
-import ReactDOM from "react-dom";
 import "./Map.css";
-import { gql, useQuery } from "@apollo/client";
-import {
-  Radio,
-  RadioGroup,
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  extendTheme,
-} from "@chakra-ui/react";
-import { radioTheme } from "./components/radiobuttonstyle.js";
-
-export const theme = extendTheme({
-  components: { Radio: radioTheme },
-});
+import { Radio, RadioGroup } from "@chakra-ui/react";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'EUR',
+const formatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "EUR",
 });
 
-const Popup = ({ cityName, countryName, data, handlePopupClose, rank }) => (
+const Popup = ({
+  cityName,
+  countryName,
+  data,
+  handlePopupClose,
+  rank,
+  group,
+  resetPreviusCity,
+  previousSelected,
+  previousSelectedGroup,
+  testprop,
+}) => (
   <div
     className="popup"
     style={{
       position: "absolute",
-      right: `80px`,
+      right: `60px`,
       top: `200px`,
     }}
   >
@@ -58,14 +49,38 @@ const Popup = ({ cityName, countryName, data, handlePopupClose, rank }) => (
         {data.map((item) => (
           <tr key={item.id}>
             <td className="itemDescription">{item.description}</td>
-            <td className="itemPrice">
-              {formatter.format(item.value)}
-            </td>
+            <td className="itemPrice">{formatter.format(item.value)}</td>
             <td className="itemRank">{item.rank}</td>
           </tr>
         ))}
       </tbody>
     </table>
+    {previousSelected && previousSelectedGroup && cityName !== previousSelected ? (
+      <div>
+        <h4
+          className={`grantGroup ${
+            countryName === " United Kingdom" ? "grantGroup-England" : ""
+          }`}
+        >
+          Estimated Erasmus grant from {previousSelected} to {cityName}
+          {countryName === " United Kingdom" && <span>*</span>}:
+          {group === previousSelectedGroup && <span> €260 to €540 </span>}
+          {group > previousSelectedGroup && <span> €200 to €490 </span>}
+          {group < previousSelectedGroup && <span> €310 to €600 </span>}
+           per month
+        </h4>
+        <div>
+          <button onClick={resetPreviusCity} className="resetButton">
+            Reset home city
+          </button>
+          {countryName === " United Kingdom" && <span>*See about section</span>}
+        </div>
+      </div>
+    ) : (
+      <h4 className="grantGroup">
+        Select another city to view estimated Erasmus grant {testprop}
+      </h4>
+    )}
   </div>
 );
 
@@ -80,7 +95,7 @@ function Sidebar({
   setQuery,
 }) {
   const cityDataEntries = cityData;
-  const cityNames = cityDataEntries.map((city) => city.name);
+  const cityNames = cityDataEntries.map((city) => city.propername);
   const countryNames = cityDataEntries.map((city) => city.country);
   const uniqueCountryNames = new Set();
   countryNames.forEach((country) => uniqueCountryNames.add(country.trim()));
@@ -117,8 +132,8 @@ function Sidebar({
           >
             {filteredCityNames.map((city) => (
               <div id="city-select">
-                <Radio value={city} className="city-radio">
-                  <span className="city-button">{city}</span>
+                <Radio value={city} variants="radiobutton">
+                  {city}
                 </Radio>
               </div>
             ))}
@@ -169,10 +184,15 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
   const [showDrawer, setShowDrawer] = useState(showDrawerProp);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [query, setQuery] = useState("");
+  const [previousSelected, setPreviousSelected] = useState(null);
+
+  const resetPreviusCity = () => {
+    setPreviousSelected(selectedCity);
+  };
 
   const handlePopupClose = () => {
     setPopup(null);
-    setSelectedCity(null);
+    setPreviousSelected(selectedCity);
   };
 
   const handleCitySelect = (city) => {
@@ -258,31 +278,7 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
         layers: ["city-areas"],
       });
       if (features.length > 0) {
-        const feature = features[0];
-        const coordinates = [feature.properties.LON, feature.properties.LAT];
-        map.easeTo({
-          center: coordinates,
-          speed: 0.5,
-          zoom: 7,
-        });
-
-        setPopup(
-          <Popup
-            cityName={feature?.properties?.city}
-            countryName={feature?.properties?.country}
-            data={
-              cityDataEntries.find(
-                (city) => city.name === feature?.properties?.cityNumbeo
-              ).data
-            }
-            handlePopupClose={handlePopupClose}
-            rank={
-              cityDataEntries.find(
-                (city) => city.name === feature?.properties?.cityNumbeo
-              ).ranking
-            }
-          />
-        );
+        handleCitySelect(features[0].properties.city);
       }
     });
 
@@ -350,38 +346,63 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
     if (map && loaded) {
       if (selectedCity != null) {
         const lat = cityData.find(
-          (city) => city.name === selectedCity
+          (city) => city.propername === selectedCity
         ).latitude;
         const lon = cityData.find(
-          (city) => city.name === selectedCity
+          (city) => city.propername === selectedCity
         ).longitude;
         const country = cityData.find(
-          (city) => city.name === selectedCity
+          (city) => city.propername === selectedCity
         ).country;
         const data = cityDataEntries.find(
-          (city) => city.name === selectedCity
+          (city) => city.propername === selectedCity
         ).data;
         const rank = cityData.find(
-          (city) => city.name === selectedCity
+          (city) => city.propername === selectedCity
         ).ranking;
+        const group = cityData.find(
+          (city) => city.propername === selectedCity
+        ).group;
 
         console.log(lat);
         const lonlat = [lon, lat];
         map.easeTo({
           center: lonlat,
           speed: 0.5,
-          zoom: 7,
+          zoom: 8,
         });
 
-        setPopup(
-          <Popup
-            cityName={selectedCity}
-            countryName={country}
-            data={data}
-            handlePopupClose={handlePopupClose}
-            rank={rank}
-          />
-        );
+        if (previousSelected == null) {
+          setPopup(
+            <Popup
+              cityName={selectedCity}
+              countryName={country}
+              data={data}
+              handlePopupClose={handlePopupClose}
+              rank={rank}
+              group={group}
+            />
+          );
+          setPreviousSelected(selectedCity);
+        } else {
+          setPopup(
+            <Popup
+              cityName={selectedCity}
+              countryName={country}
+              data={data}
+              handlePopupClose={handlePopupClose}
+              rank={rank}
+              group={group}
+              resetPreviusCity={resetPreviusCity}
+              previousSelected={previousSelected}
+              previousSelectedGroup={
+                cityDataEntries.find(
+                  (city) => city.propername === previousSelected
+                ).group
+              }
+            />
+          );
+        }
       }
     }
   }, [map, loaded, selectedCity]);

@@ -13,9 +13,23 @@
   height: 100vh;
 }
 
+.popup-container {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  margin-top: 20px;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 .popup {
   width: 520px;
-  height: 420px;
+  height: 505px;
   background-color: #dfdfdf;
   border: 1px solid black;
   padding: 10px;
@@ -34,6 +48,14 @@
   border: none;
   background-color: transparent;
   cursor: pointer;
+  margin-left: 4px;
+  margin-right: 4px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.close-button:hover {
+  color: #000;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .sidebar {
@@ -49,6 +71,7 @@
   z-index: 9;
   transition: all 0.3s ease;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-transform: translate3d(0, 0, 1px);
   -moz-transform: translate3d(0, 0, 1px);
   -ms-transform: translate3d(0, 0, 1px);
@@ -181,4 +204,40 @@
   font-family: "customFont", Arial, Helvetica, sans-serif;
   justify-content: right;
   text-align: right;
+}
+
+.grantGroup {
+  font-size: 16px;
+  font-style: bold;
+  margin: 0;
+  margin-top: 10px;
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  justify-content: center;
+  text-align: left;
+  
+}
+
+.resetButton {
+  font-size: 16px;
+  margin: 4px;
+  font-style: bold;
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  justify-content: center;
+  text-align: right;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  z-index: 999;
+  border:rgba(0, 0, 0, 0.2) 0.5px solid;
+  background-color: #d9ded6;
+  border-radius: 7px;
+}
+
+.resetButton:hover {
+  background-color: #C9D7C7;
+}
+
+.resetButton:active {
+  background-color: #B9C7B7;  
 }

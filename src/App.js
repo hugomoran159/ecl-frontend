@@ -21,6 +21,7 @@ const GET_CITY_DATA = gql`
       country {
         name
       }
+      propername
       data {
         name
         description
@@ -90,6 +91,8 @@ function SetCityData() {
       country: country,
       data: cityData,
       ranking: city.ranking,
+      group: city.group,
+      propername: city.propername,
     };
   });
   console.log("data retrieved");

@@ -11,7 +11,7 @@ import {
 } from "@apollo/client";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { ChakraBaseProvider, extendBaseTheme } from "@chakra-ui/react";
-import chakraTheme from "@chakra-ui/theme";
+import {theme} from "./components/Radio/index.js";
 
 const client = new ApolloClient({
   uri: "https://eclbackend.herokuapp.com/graphql",
@@ -22,7 +22,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <ChakraBaseProvider theme={chakraTheme}>
+      <ChakraBaseProvider theme={theme}>
         <App />
       </ChakraBaseProvider>
     </ApolloProvider>
