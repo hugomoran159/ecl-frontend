@@ -1,5 +1,5 @@
 :root {
-  --menu-color: #4b4b4d;
+  --menu-color: #EAE7DC;
 }
 
 @font-face {
@@ -33,25 +33,26 @@ nav {
 .navbar-button {
   cursor: pointer;
   margin-left: auto;
-  color: rgba(0, 0, 0, 0.8);
+  color: #8E8D89;
   margin-right: 30px;
   transform: translateX(10px);
   border-radius: 10px;
 }
 
 .navbar-button:hover {
-  color: #000;
+  color: #a2a19d;
 
 }
 .navbar-button:active {
   background-color: rgba(0, 0, 0, 0.2);
+  color: #82817d;
 }
 
 .navbar-title {
   font-size: 24px;
   margin: 0;
   margin-left: 50px;
-  color: #f0f0f0;
+  color: #E85950;
   font-family: "customFont", Arial, Helvetica, sans-serif;
   -webkit-transform: translate3d(0, 0, 1px);
   -moz-transform: translate3d(0, 0, 1px);
@@ -125,13 +126,13 @@ nav {
 .about-button {
   font-family: "customFont", Arial, Helvetica, sans-serif;
   font-size: 18px;
-  color: #f0f0f0;
+  color: #E85950;
   padding: 5px;
   border-radius: 10px;
 }
 
 .about-button:hover {
-  color: #fff;
+  color: #e68882;
   background-color: rgba(0, 0, 0, 0.05);
 }
 .about-button:active {
@@ -151,4 +152,77 @@ nav {
   border-radius: 7px;
   align-items: center;
   justify-content: center;
+}
+
+.overlay {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  position: fixed;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #EAE7DC;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+#about-title {
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  color: #E85950;
+  margin: 0;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+#about-subtitle {
+  font-family: "customFont", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  color: #8E8D89;
+  margin: 0;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+#close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+#close-button:hover {
+  color: #b4b4a9;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+#close-button:active {
+  color: #aaa;
+}
+
+#website-overview {
+  margin-bottom: 5px;
+}
+
+#brexit-warning {
+  margin-bottom: 5px;
+}
+
+#data-source {
+  margin-bottom: 5px;
+}
+
+#website-creator {
+  
 }

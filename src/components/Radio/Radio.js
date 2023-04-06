@@ -10,28 +10,35 @@ const { definePartsStyle, defineMultiStyleConfig } =
 const baseStyle = definePartsStyle({
   // define the part you're going to style
   control: {
-    
-    _checked: {
-        bg: "#5E7564",
-        borderColor: "#5E7564",
 
-        _hover: {
-            bg: "#5E7564",
-            borderColor: "#5E7564",
-        },
-    },
+    borderColor: '#000',
+    
+  
 
     _hover: {
         borderColor: "#fff",
-  }
+
+  },
+
+    _checked: {
+      backgroundColor: "#000",
+      color: "#000",
+      borderColor: "#fff",
+
+      _hover: {
+        bg: "#000",
+        borderColor: "#fff",
+        color: "#000",
+      }
+    }
 },
 
   label: {
     fontFamily: "customFont",
-    color: "#eaeaea",
+    color: "#000",
 
     _hover: {
-        color: "#fff",
+        color: "#000",
     },
 
   }

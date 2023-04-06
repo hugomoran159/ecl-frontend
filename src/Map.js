@@ -33,10 +33,38 @@ const Popup = ({
     <button className="close-button" onClick={handlePopupClose}>
       X
     </button>
-    <h2 className="city-popup-title">
+    <h1 className="city-popup-title">
       {cityName}, {countryName}
-    </h2>
-    <h3 className="cityRank">Overall cost ranking: {rank}</h3>
+    </h1>
+    <h2 className="cityRank">Overall cost ranking: {rank}</h2>
+    {previousSelected &&
+    previousSelectedGroup &&
+    cityName !== previousSelected ? (
+      <div>
+        <h4
+          className={`grantGroup ${
+            countryName === " United Kingdom" ? "grantGroup-England" : ""
+          }`}
+        >
+          Estimated Erasmus grant from {previousSelected} to {cityName}
+          {countryName === " United Kingdom" && <span>*</span>}:
+          {group === previousSelectedGroup && <span> €260 to €540 </span>}
+          {group > previousSelectedGroup && <span> €200 to €490 </span>}
+          {group < previousSelectedGroup && <span> €310 to €600 </span>}
+          per month
+        </h4>
+        <div>
+          <button onClick={resetPreviusCity} className="resetButton">
+            Reset home city
+          </button>
+          {countryName === " United Kingdom" && <span>*See about section</span>}
+        </div>
+      </div>
+    ) : (
+      <h4 className="grantGroup">
+        Select another city to view estimated Erasmus grant {testprop}
+      </h4>
+    )}
     <table>
       <thead>
         <tr>
@@ -55,34 +83,15 @@ const Popup = ({
         ))}
       </tbody>
     </table>
-    {previousSelected && previousSelectedGroup && cityName !== previousSelected ? (
-      <div>
-        <h4
-          className={`grantGroup ${
-            countryName === " United Kingdom" ? "grantGroup-England" : ""
-          }`}
-        >
-          Estimated Erasmus grant from {previousSelected} to {cityName}
-          {countryName === " United Kingdom" && <span>*</span>}:
-          {group === previousSelectedGroup && <span> €260 to €540 </span>}
-          {group > previousSelectedGroup && <span> €200 to €490 </span>}
-          {group < previousSelectedGroup && <span> €310 to €600 </span>}
-           per month
-        </h4>
-        <div>
-          <button onClick={resetPreviusCity} className="resetButton">
-            Reset home city
-          </button>
-          {countryName === " United Kingdom" && <span>*See about section</span>}
-        </div>
-      </div>
-    ) : (
-      <h4 className="grantGroup">
-        Select another city to view estimated Erasmus grant {testprop}
-      </h4>
-    )}
   </div>
 );
+
+function getColorByRanking(ranking, maxRanking) {
+  const hue =
+    (1 - (ranking - 1) / (maxRanking - 1)) * 25 +
+    ((ranking - 1) / (maxRanking - 1)) * 160;
+  return `hsl(${hue}, 100%, 50%)`;
+}
 
 function Sidebar({
   cityData,
@@ -95,15 +104,21 @@ function Sidebar({
   setQuery,
 }) {
   const cityDataEntries = cityData;
-  const cityNames = cityDataEntries.map((city) => city.propername);
+  const filteredCityDataEntries = cityDataEntries
+    .filter((city) =>
+      city.propername.toLowerCase().includes(query.toLowerCase())
+    )
+    .sort((a, b) => a.ranking - b.ranking);
+
   const countryNames = cityDataEntries.map((city) => city.country);
   const uniqueCountryNames = new Set();
   countryNames.forEach((country) => uniqueCountryNames.add(country.trim()));
   const uniqueCountryNamesArray = Array.from(uniqueCountryNames);
 
-  const filteredCityNames = cityNames.filter((city) =>
-    city.toLowerCase().includes(query.toLowerCase())
+  const filteredCityNames = filteredCityDataEntries.filter((city) =>
+    city.propername.toLowerCase().includes(query.toLowerCase())
   );
+
   const filteredCountryNames = uniqueCountryNamesArray.filter((country) =>
     country.toLowerCase().includes(query.toLowerCase())
   );
@@ -131,9 +146,18 @@ function Sidebar({
             value={selectedCity}
           >
             {filteredCityNames.map((city) => (
-              <div id="city-select">
-                <Radio value={city} variants="radiobutton">
-                  {city}
+              <div
+                className={`city-select rank-${city.ranking}`}
+                style={{
+                  backgroundColor: getColorByRanking(
+                    city.ranking,
+                    filteredCityNames.length
+                  ),
+                  borderRadius: "2px",
+                }}
+              >
+                <Radio value={city.propername} variants="radiobutton">
+                  {city.propername}
                 </Radio>
               </div>
             ))}
@@ -171,6 +195,88 @@ function Sidebar({
   }
 }
 
+function Sidebar2({
+  cityName,
+  cityData,
+  resetPreviusCity,
+  previousSelected,
+  previousSelectedGroup,
+  handlePopupClose,
+}) {
+
+  if (!cityName) {
+    return (
+      <div id="sidebar2">
+        <p className="cityRank">Select A City To Get Started</p>
+      </div>
+    );
+  }
+  const data = cityData.find((city) => city.propername === cityName).data;
+  const group = cityData.find((city) => city.propername === cityName).group;
+  const rank = cityData.find((city) => city.propername === cityName).ranking;
+  const countryName = cityData.find(
+    (city) => city.propername === cityName
+  ).country;
+
+  
+  return (
+    <div id="sidebar2">
+      <h1 className="city-popup-title">
+        {cityName}, {countryName}
+      </h1>
+      <h2 className="cityRank">Overall cost ranking: {rank}</h2>
+      {previousSelected &&
+      previousSelectedGroup &&
+      cityName !== previousSelected ? (
+        <div>
+          <h4
+            className={`grantGroup ${
+              countryName === " United Kingdom" ? "grantGroup-England" : ""
+            }`}
+          >
+            Estimated Erasmus grant from {previousSelected} to {cityName}
+            {countryName === " United Kingdom" && <span>*</span>}:
+            {group === previousSelectedGroup && <span> €260 to €540 </span>}
+            {group > previousSelectedGroup && <span> €200 to €490 </span>}
+            {group < previousSelectedGroup && <span> €310 to €600 </span>}
+            per month
+          </h4>
+          <div>
+            <button onClick={resetPreviusCity} className="resetButton">
+              Reset home city
+            </button>
+            {countryName === " United Kingdom" && (
+              <span>*See about section</span>
+            )}
+          </div>
+        </div>
+      ) : (
+        <h4 className="grantGroup">
+          Select another city to view estimated Erasmus grant
+        </h4>
+      )}
+      <table id="table-container">
+        <thead>
+          <tr>
+            <th className="descriptionTitle">Description</th>
+            <th className="priceTitle">Price</th>
+            <th className="rankingTitle">Ranking</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item) => (
+            <tr key={item.id}>
+              <td className="itemDescription">{item.name === "rent" ? 'One Room in an Apartment (3 bedrooms)' : item.description}</td>
+              <td className="itemPrice">{item.name === "rent" ? formatter.format(item.value/3) : formatter.format(item.value)}</td>
+              <td className="itemRank">{item.rank}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 //Start of Map component
 
 const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
@@ -185,18 +291,19 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [query, setQuery] = useState("");
   const [previousSelected, setPreviousSelected] = useState(null);
+  const [citySelected, setCitySelected] = useState(false);
 
   const resetPreviusCity = () => {
     setPreviousSelected(selectedCity);
   };
 
   const handlePopupClose = () => {
-    setPopup(null);
-    setPreviousSelected(selectedCity);
+    setCitySelected(false);
   };
 
   const handleCitySelect = (city) => {
     setSelectedCity(city);
+    setCitySelected(true);
   };
 
   const handleCountrySelect = (country) => {
@@ -208,12 +315,15 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
     console.log("mapparams");
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/hugomoran/clfq3nsns008y01pcwqpu121m",
-      projection: "globe",
+      style: "mapbox://styles/hugomoran/clg3xhd9d001j01jz4bwcvunw",
+      projection: "mercator",
       center: [12.5788, 48.888],
-      zoom: 4,
+      zoom: 2,
+      maxBounds: [
+        [-32.79, 23.49],
+        [58.4, 71.51],
+      ],
     });
-
     console.log("mapparams");
 
     map.on("load", () => {
@@ -260,8 +370,8 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
             "fill-color": [
               "case",
               ["boolean", ["feature-state", "hover"], false],
-              "#756A6A",
-              "#5E7564",
+              "#E85950",
+              "#8E8D89",
             ],
 
             "fill-opacity": 0.7,
@@ -429,7 +539,25 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
           setQuery={setQuery}
         />
       </div>
-      {popup}
+      {citySelected ? (
+        previousSelected !== null ? (
+          <Sidebar2
+            cityName={selectedCity}
+            cityData={cityDataEntries}
+            resetPreviusCity={resetPreviusCity}
+            previousSelected={previousSelected}
+            previousSelectedGroup={
+              cityDataEntries.find(
+                (city) => city.propername === previousSelected
+              ).group
+            }
+          />
+        ) : (
+          <Sidebar2 cityName={selectedCity} cityData={cityDataEntries} />
+        )
+      ) : (
+        <Sidebar2 />
+      )}
       <div ref={mapContainerRef} className="map-container" />
     </div>
   );
