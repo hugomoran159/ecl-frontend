@@ -2,19 +2,9 @@ import React, { useRef, useState } from "react";
 import "./navbar.css";
 import { faBars, faMap } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverBody,
-  Radio,
-  RadioGroup,
-} from "@chakra-ui/react";
+
 import Map from "../Map.js";
-import customFont from "../CenturyGothic.ttf";
+
 
 
 function Navbar({ sources = [], cityData = [] }) {
@@ -58,7 +48,7 @@ function Navbar({ sources = [], cityData = [] }) {
           <p id="website-overview">Eramsus Cost of Living was made to help erasmus students plan their academic exchange.</p>
           <p id="brexit-warning">* The UK is not part of the Erasmus program, consequently grant estimates are not accurate. 
           Grants will depend on individual agreements between your home and destination institutions.</p>
-          <p id="data-source">All data was sourced from <a href="https://www.numbeo.com/cost-of-living/">Numbeo.com</a> for academic purposes</p>
+          <p id="data-source">All data was sourced from <a href="https://www.numbeo.com/cost-of-living/" id="numbeo-link">Numbeo.com</a> for academic purposes</p>
           <p id="website-creator">This website was created by Hugo Moran as a final year project for Trinity College Dublin.</p>
           <p id="website-creator-email">Email: moranhu@tcd.ie</p>
           <button onClick={handleCloseModal} id="close-button">X</button>
