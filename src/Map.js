@@ -568,16 +568,3 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
 };
 
 export default Map;
-
-/*
-<ToggleButtonGroup
-          color="primary"
-          value={visibleLayer}
-          exclusive
-          onChange={handleChange}
-          aria-label="Platform"
-        >
-          <ToggleButton value="city-areas">Cities</ToggleButton>
-          <ToggleButton value="countries">Countries</ToggleButton>
-        </ToggleButtonGroup>
-        */
