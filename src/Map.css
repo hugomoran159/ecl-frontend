@@ -65,7 +65,6 @@
   top: 40px;
   bottom: 0;
   width: 200px;
-  background-color: var(--menu-color);
   border-right: 2px solid;
   border-color: rgba(0, 0, 0, 0.2);
   z-index: 9;
@@ -82,13 +81,13 @@
 .sidebar-open {
   transform: translateX(200px);
 }
-#sidebar2 {
+
+.sidebar2 {
   position: absolute;
   top: 40px;
   right: 0;
   bottom: 0;
   width: 300px;
-  background-color: var(--menu-color);
   border-right: 2px solid rgba(0, 0, 0, 0.2);
   z-index: 10;
   -webkit-transition: all 0.3s ease;
@@ -106,7 +105,6 @@
 
 .searchbar {
   border: 2px solid;
-  background-color: var(--menu-color);
   border-color: rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   margin-left: 4px;

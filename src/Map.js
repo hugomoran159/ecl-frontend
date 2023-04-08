@@ -222,7 +222,7 @@ function Sidebar2({
 
   
   return (
-    <div id="sidebar2">
+    <div className="sidebar2">
       <h1 className="city-popup-title">
         {cityName}, {countryName}
       </h1>
@@ -295,11 +295,6 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
   const [previousSelected, setPreviousSelected] = useState(null);
   const [citySelected, setCitySelected] = useState(false);
 
-  const [_, forceUpdate] = React.useReducer((x) => x + 1, 0);
-
-  useEffect(() => {
-    forceUpdate();
-  }, []);
 
   const resetPreviusCity = () => {
     setPreviousSelected(selectedCity);
@@ -450,6 +445,7 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
 
   useEffect(() => {
     if (map && loaded) {
+
       map.setLayoutProperty(layer, "visibility", "visible");
       if (visibleLayer === null) {
         setVisibleLayer(layer);
