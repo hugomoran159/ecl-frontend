@@ -91,6 +91,7 @@
   background-color: var(--menu-color);
   border-right: 2px solid rgba(0, 0, 0, 0.2);
   z-index: 10;
+  -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
   overflow-y: auto;
   overflow-x: hidden;

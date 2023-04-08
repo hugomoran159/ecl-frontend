@@ -204,6 +204,8 @@ function Sidebar2({
   handlePopupClose,
 }) {
 
+  
+
   if (!cityName) {
     return (
       <div id="sidebar2">
@@ -292,6 +294,12 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
   const [query, setQuery] = useState("");
   const [previousSelected, setPreviousSelected] = useState(null);
   const [citySelected, setCitySelected] = useState(false);
+
+  const [_, forceUpdate] = React.useReducer((x) => x + 1, 0);
+
+  useEffect(() => {
+    forceUpdate();
+  }, []);
 
   const resetPreviusCity = () => {
     setPreviousSelected(selectedCity);
