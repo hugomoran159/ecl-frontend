@@ -49,6 +49,7 @@ function Navbar({ sources = [], cityData = [] }) {
           <p id="brexit-warning">* The UK is not part of the Erasmus program, consequently grant estimates are not accurate. 
           Grants will depend on individual agreements between your home and destination institutions.</p>
           <p id="grant-info">Grant estimates are based on the Erasmus+ program guide published by the European Commission and are done on a country by country basis.</p>
+          <p id="grant-info">The cost rankings are constructed by ranking each price in the city data set. The overall price ranking takes a weighted average of the individual price rankings.</p>
           <p id="data-source">All data was sourced from <a href="https://www.numbeo.com/cost-of-living/" id="numbeo-link">Numbeo.com</a> for academic purposes</p>
           <p id="website-creator">This website was created by Hugo Moran as a final year project for Trinity College Dublin.</p>
           <p id="website-creator-email">Email: moranhu@tcd.ie</p>
