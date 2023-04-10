@@ -373,8 +373,8 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
             "fill-color": [
               "case",
               ["boolean", ["feature-state", "hover"], false],
-              "#E85950",
               "#8E8D89",
+              "#E85950",
             ],
 
             "fill-opacity": 0.7,
