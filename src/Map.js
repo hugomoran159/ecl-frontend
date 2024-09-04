@@ -386,45 +386,54 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
       setLoaded(true);
     });
 
+    let clickedCityID = null;
+    let cityID = null;
+
     map.on("click", (e) => {
+
       const features = map.queryRenderedFeatures(e.point, {
         layers: ["city-areas"],
       });
+
       if (features.length > 0) {
-        handleCitySelect(features[0].properties.city);
+        const clickedFeature = features[0];
+       handleCitySelect(clickedFeature.properties.city);
       }
     });
 
-    let cityID = null;
-
     map.on("mousemove", "city-areas", (e) => {
       map.getCanvas().style.cursor = "pointer";
-
-      if (e.features.length == 0) return;
-
-      if (cityID) {
-        map.removeFeatureState({
-          source: "citydata",
-          id: cityID,
-        });
+      if (e.features.length === 0) return;
+      const hoveredCityID = e.features[0].id;
+      if (cityID && cityID !== clickedCityID) {
+        map.setFeatureState(
+          {
+            source: "citydata",
+            id: cityID,
+          },
+          {
+            hover: false,
+          }
+        );
       }
 
-      cityID = e.features[0].id;
-
-      map.setFeatureState(
-        {
-          source: "citydata",
-          id: cityID,
-        },
-        {
-          hover: true,
-        }
-      );
+      cityID = hoveredCityID;
+      if (hoveredCityID !== clickedCityID) {
+        map.setFeatureState(
+          {
+            source: "citydata",
+            id: hoveredCityID,
+          },
+          {
+            hover: true,
+          }
+        );
+      }
     });
 
     map.on("mouseleave", "city-areas", () => {
       map.getCanvas().style.cursor = "";
-      if (cityID) {
+      if (cityID && cityID !== clickedCityID) {
         map.setFeatureState(
           {
             source: "citydata",
@@ -437,12 +446,10 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
       }
       cityID = null;
     });
-
     console.log("mapset");
-
     return () => map.remove();
-  }, [sources, cityData]);
-
+    }, [sources, cityData]);
+  
   useEffect(() => {
     if (map && loaded) {
 
@@ -483,7 +490,6 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
         map.easeTo({
           center: lonlat,
           speed: 0.5,
-          zoom: 8,
         });
 
         if (previousSelected == null) {

@@ -1,133 +1,117 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Map from "./Map";
-import citydata from "./citydata.geojson";
-import countriesdata from "./countries-mod.geojson";
-import { gql, useQuery } from "@apollo/client";
 import { IconButton, Toolbar, AppBar, Typography, Button } from "@mui/material";
 import MapIcon from "@mui/icons-material/Map";
 import MenuIcon from "@mui/icons-material/Menu";
 import Stack from "@mui/material/Stack";
 import Navbar from "./components/navbar";
+import Papa from "papaparse";
 import "./App.css";
 
-const GET_CITY_DATA = gql`
-  query {
-    cities {
-      name
-      latitude
-      longitude
-      ranking
-      group
-      country {
-        name
-      }
-      propername
-      data {
-        name
-        description
-        currency
-        value
-        rank
-      }
-    }
+async function fetchGeojsonData(filePath) {
+  try {
+    const response = await fetch(filePath);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching geojson data:", error);
+    return null;
   }
-`;
-
-const GET_CITY_AREAS = gql`
-  query {
-    cityGeojson {
-      geojson
-    }
-  }
-`;
-
-const GET_COUNTRY_AREA = gql`
-  query {
-    countryGeojson {
-      geojson
-    }
-  }
-`;
-
-function SetCityGeojson() {
-  const { loading, error, data } = useQuery(GET_CITY_AREAS);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :(</p>;
-  console.log("data retrieved");
-  return data.cityGeojson.map(({ geojson }) => {
-    return JSON.parse(geojson);
-  });
 }
 
-function SetCountryGeojson() {
-  const { loading, error, data } = useQuery(GET_COUNTRY_AREA);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :(</p>;
-  console.log("data retrieved");
-  return data.countryGeojson.map(({ geojson }) => {
-    return JSON.parse(geojson);
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'EUR',
+});
+
+async function fetchCityDataFromCSV() {
+  return new Promise((resolve, reject) => {
+    Papa.parse('/city_data.csv', {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        if (results.errors.length) {
+          console.error("Errors occurred while parsing the CSV:", results.errors);
+          reject(results.errors);
+        } else {
+          const cities = results.data.map((city) => {
+            const parseField = (field) => {
+              const match = field.match(/\['(.+?)'\s*,\s*(\d+\.\d+|\d+)\s*,\s*(\d+)\]/);
+              return match ? { description: match[1].trim(), value: parseFloat(match[2]), rank: parseInt(match[3], 10) } : { description: '', value: 0, rank: 0 };
+            };
+
+            return {
+              name: city.city,
+              currency: city.currency,
+              latitude: parseFloat(city.latitude),
+              longitude: parseFloat(city.longitude),
+              country: city.country,
+              group: parseInt(city.group, 10),
+              propername: city.cityproper,
+              ranking: parseInt(city.overall_rank, 10),
+              data: [
+                { name: "meal", ...parseField(city.meal) },
+                { name: "mcmeal", ...parseField(city.mcmeal) },
+                { name: "beer restaurant", ...parseField(city["beer restaurant"]) },
+                { name: "milk", ...parseField(city.milk) },
+                { name: "rice", ...parseField(city.rice) },
+                { name: "potato", ...parseField(city.potato) },
+                { name: "water", ...parseField(city.water) },
+                { name: "cigarettes", ...parseField(city.cigarettes) },
+                { name: "coffee", ...parseField(city.coffee) },
+                { name: "ticket", ...parseField(city.ticket) },
+                { name: "rent", ...parseField(city.rent) },
+              ],
+            };
+          });
+          resolve(cities);
+        }
+      },
+      error: (error) => {
+        console.error("Error fetching CSV data:", error);
+        reject(error);
+      },
+    });
   });
-}
-
-function SetCityData() {
-  const { loading, error, data } = useQuery(GET_CITY_DATA);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error :(</p>;
-
-  const cities = data.cities.map((city) => {
-    const country = city.country.name;
-    const cityData = city.data.map((data) => ({
-      name: data.name,
-      description: data.description,
-      currency: data.currency,
-      value: data.value,
-      rank: data.rank,
-    }));
-
-    return {
-      name: city.name,
-      latitude: city.latitude,
-      longitude: city.longitude,
-      country: country,
-      data: cityData,
-      ranking: city.ranking,
-      group: city.group,
-      propername: city.propername,
-    };
-  });
-  console.log("data retrieved");
-
-  return cities;
 }
 
 const App = () => {
-  const sources = [SetCountryGeojson()[0], SetCityGeojson()[0]];
-  const cityData = SetCityData();
-  const [loading, setLoading] = React.useState(true);
+  const [sources, setSources] = useState([]);
+  const [cityData, setCityData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
-    if (sources && cityData && sources.length > 0 && cityData.length > 0) {
-      setLoading(false);
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const cityGeojson = await fetchGeojsonData("/citydata.geojson");
+        const countryGeojson = await fetchGeojsonData("/countries-mod.geojson");
+        const cities = await fetchCityDataFromCSV();
+        setSources([countryGeojson, cityGeojson]);
+        setCityData(cities);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading data:", error);
+        setLoading(false);
+      }
     }
-  }, [sources, cityData]);
+
+    loadData();
+  }, []);
 
   return (
     <div className="background">
-      <div
-        className={`loading ${loading ? "" : "loading-finished"}`}
-      >
+{/*     <div className={`loading ${loading ? "" : "loading-finished"}`}>
         <p className="loading-text">Loading...</p>
       </div>
+      */}
       <div
         className="content"
         style={{
-          opacity:
-            sources && cityData && sources.length > 0 && cityData.length > 0
-              ? 1
-              : 0,
+          opacity: sources.length > 0 && cityData.length > 0 ? 1 : 0,
         }}
       >
-        {sources && cityData && sources.length > 0 && cityData.length > 0 ? (
+        {sources.length > 0 && cityData.length > 0 ? (
           <Navbar sources={sources} cityData={cityData}></Navbar>
         ) : null}
       </div>

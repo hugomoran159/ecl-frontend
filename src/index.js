@@ -3,29 +3,16 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  gql,
-} from "@apollo/client";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { ChakraBaseProvider, extendBaseTheme } from "@chakra-ui/react";
 import {theme} from "./components/Radio/index.js";
 
-const client = new ApolloClient({
-  uri: "https://eclbackend.herokuapp.com/graphql",
-  cache: new InMemoryCache(),
-});
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <ApolloProvider client={client}>
       <ChakraBaseProvider theme={theme}>
         <App />
       </ChakraBaseProvider>
-    </ApolloProvider>
   </React.StrictMode>
 );
 

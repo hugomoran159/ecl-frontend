@@ -1,5 +1,5 @@
 :root {
-  --menu-color: #EAE7DC;
+  --menu-color: #fefefe;
 }
 
 @font-face {
@@ -33,7 +33,7 @@ nav {
 .navbar-button {
   cursor: pointer;
   margin-left: auto;
-  color: #8E8D89;
+  color: #898b8e;
   margin-right: 30px;
   transform: translateX(10px);
   border-radius: 10px;
@@ -52,7 +52,7 @@ nav {
   font-size: 24px;
   margin: 0;
   margin-left: 50px;
-  color: #E85950;
+  color: #000000;
   font-family: "customFont", Arial, Helvetica, sans-serif;
   -webkit-transform: translate3d(0, 0, 1px);
   -moz-transform: translate3d(0, 0, 1px);
@@ -126,13 +126,13 @@ nav {
 .about-button {
   font-family: "customFont", Arial, Helvetica, sans-serif;
   font-size: 18px;
-  color: #E85950;
+  color: #000000;
   padding: 5px;
   border-radius: 10px;
 }
 
 .about-button:hover {
-  color: #e68882;
+  color: #484848;
   background-color: rgba(0, 0, 0, 0.05);
 }
 .about-button:active {
@@ -171,7 +171,7 @@ nav {
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
-  background-color: #EAE7DC;
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 5px;
 }
@@ -179,7 +179,7 @@ nav {
 #about-title {
   font-family: "customFont", Arial, Helvetica, sans-serif;
   font-size: 24px;
-  color: #E85950;
+  color: #000000;
   margin: 0;
   margin-bottom: 10px;
   text-align: left;
@@ -188,7 +188,7 @@ nav {
 #about-subtitle {
   font-family: "customFont", Arial, Helvetica, sans-serif;
   font-size: 18px;
-  color: #8E8D89;
+  color: #ededed;
   margin: 0;
   margin-bottom: 10px;
   text-align: left;
