@@ -449,7 +449,7 @@ const Map = ({ sources = [], cityData = [], layer, showDrawerProp }) => {
     console.log("mapset");
     return () => map.remove();
     }, [sources, cityData]);
-  
+
   useEffect(() => {
     if (map && loaded) {
 
